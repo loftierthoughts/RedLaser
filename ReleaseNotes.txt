@@ -1,0 +1,176 @@
+RedLaser iPhone SDK Release Notes
+---------------------------------------------------------------------
+These notes are in reverse chronological order with the newest at the top.
+
+---------------------------------------------------------------------
+20141031 Version 3.5.3
+
+* RedLaser now includes API for respecting the privacy settings of the user camera. The RL_CheckReadyStatus function can now return a value of RLState_NoVideoAuthorization. This indicates that the user has not yet opted in to enable their camera in your application. You may call the RL_RequestVideoAuthorization function to request camera permissions from the system. A return value of RL_VideoAuthorizationStatusAuthorized implies that you are ready to use RedLaser.
+* Fixes an issue where linking RedLaser against a unit testing bundle might lead to a crash.
+
+---------------------------------------------------------------------
+20140319 Version 3.5.2
+
+* Fixes an issue where the camera would sometimes keep trying to focus after a session ended.
+
+---------------------------------------------------------------------
+20131023 Version 3.5.1
+
+* RedLaser now has a separate 32 & 64-bit library with a minimum OS of 5.1. Because of how Xcode handles c++ standard libraries, this new library links against libc++ instead of libstdc++. The intent here is to match the Xcode default standard library for the various configurations.
+* The original RedLaser SDK library is 32-bit only, works fine on OS versions 4.3 to 7, and links against libstdc++.
+* We now integrate iOS 7's os-level barcode scanning. The biggest user-visible change that comes from this is that we now support Aztec barcodes. Note, however, that Aztec barcodes will only ever be recognized when running iOS 7. 
+
+---------------------------------------------------------------------
+20130724 Version 3.5.0
+
+* Added a new BarcodePickerController2 class, which a superclass of the previous BarcodePickerController (which should be considered deprecated). The new class works a bit differently; read the documentation for more info.
+* The SDK now requires AdSupport.framework, as it accesses the advertisingIdentifier value on iOS 6.0. The SDK does not show ads.
+* The poorly-named *Flash methods from previous versions are now renamed *Torch, for clarity.
+* More improvements to PDF417 scanning.
+
+---------------------------------------------------------------------
+20130220 Version 3.4.1
+
+* Fixed a PDF417 text-conversion issue.
+* PDF417 now handles the case where a misread causes the number of error correction symbols to be greater than the number of symbols.
+* The SDK is now a bit pickier about very short Code 39, Codabar, and ITF codes. This should reduce false positives for these codes without interfering with valid reads.
+* Fixed some corner-finding issues, particularly with Databar barcodes.
+
+---------------------------------------------------------------------
+20121001 Version 3.4.0
+
+
+* Added support for PDF417 barcodes
+* Added support for Code 93 barcodes
+* Added support for GS1 Databar barcodes
+* Removed support for StickyBits barcodes
+* Improved barcode location bounds reporting
+* The SDK now has an opt-in method that can geotag scan results
+
+---------------------------------------------------------------------
+20120924 Version 3.3.2
+
+* The SDK is now built with Xcode 4.5 and iOS SDK 6.0, which implies:
+* Added armv7s processor architecture
+* Removed armv6 architecture, which means the iPhone 3G is no longer supported
+  and the SDK will not run on a iPhone 3G device.
+* The minimum supported OS for the SDK is now 4.3, although the SDK should
+  continue to work with 4.0 and above.
+
+---------------------------------------------------------------------
+20120624 Version 3.3.1
+
+* Added methods to let the application lock the exposure level. This is a workaround for
+  an issue on the iPhone 4S which makes it slow to adapt to changes in light conditions.
+* requestCameraSnapshot now takes a boolean argument; set the boolean to TRUE to take a 
+  camera picture at the camera's picture resolution, or FALSE to retrieve a preview frame
+  at the camera's preview resolution.
+
+---------------------------------------------------------------------
+20120409 Version 3.3.0
+
+* Improved scanning in low-light conditions
+* Improved EAN scanning on iPad 2 and iPod Touch devices
+* New Sample app that demonstrates new features introduced in 3.2.X versions of the SDK.
+* Added support for the Codabar symbology.
+* Added API call to capture camera preview images while scanning.
+* BarcodeResult now conforms to NSCoding.
+
+---------------------------------------------------------------------
+20111206 Version 3.2.4
+
+* Fixed a bug involving photo scanning for QR Codes
+
+---------------------------------------------------------------------
+20111110 Version 3.2.3
+
+* Added a new method to the BarcodePickerController -- prepareToScan. Calling this method prepares an AVCaptureSession but does not begin looking for barcodes. Calling this method a few seconds before the user initiates a scan may help decrease the amount time spent waiting for the camera.
+* Additionally, after a scan session ends (that is, doneScanning is called), the AVCaptureSession will be kept running for a few seconds, and reused if another scan session is launched (with the same BarcodePickerController object). 
+* In both of these cases, if a scanning session isn't initiated within 20 seconds, the idling AVCaptureSession will be shut down to save battery life.
+---------------------------------------------------------------------
+20111020 Version 3.2.2
+
+* If there is no overlay or if the overlay doesn't have a status method, the SDK will now end the scan session as soon as the first barcode is found. This is mostly to aid developers with SDK bring up.
+* The SDK used to only support UIImageOrientationUp and UIImageOrientationLandscapeRight. We now support UIImageOrientationDown and UIImageOrientationLandscapeLeft as well. Note that the orientation flag is only a hint as to where to look most thoroughly; barcodes may still be found in other orientations.
+
+---------------------------------------------------------------------
+20110921 Version 3.2.0
+
+* Improved scanning performance for EAN-13 codes on non-focusing cameras, such the 4th generation iPod Touch and the iPad 2.
+* Added a new API method that detects barcodes in a given UIImage.
+* The code that determines the bounding box for where a barcode was detected is much improved. 
+* Added code that attempts to detect and reject false positive results. 
+* Improved speed of QR code scanning. 
+* Added a new API method that returns the installed version of the SDK.
+
+---------------------------------------------------------------------
+20110622 Version 3.1.0
+
+* Improved support for the iPad 2. The SDK now correctly handles orientation when placed inside a popover, and scaling of the camera preview is improved.
+* Added RL_CheckReadyStatus() call to API. This function can be called early to check if the SDK can be used on the current device and OS, and also returns info on license status.
+* The frontCamera property can now be changed while a session is running; the session will switch views and keep going.
+* Added cameraSupportsTapToFocus property. This simplifies the process of giving the best guidance to users with different device models.
+* Reorganized the files in the SDK package to make it more clear which SDK Files are required (the ones in "RedLaser SDK Files"), and which are graphic assets which app writers may choose to use in their overlay code.
+
+---------------------------------------------------------------------
+20110218 Version 3.0.0
+
+* Added better support for Code 39. Long barcodes like VIN can now be scanned in either rotated or non-rotated orientation, on newer phones with better hardware such as the iPhone 4. Our previous recommendation to use landscape orientation still stands for older hardware.
+* New 'stitching' method for scanning long Code 39 barcodes. The SDK detects when a long barcode is visible but isn't getting scanned successfully, and informs the application-provided overlay. The overlay code can then guide the user to hold the phone near the first half of the barcode, and then the second half. The SDK will stitch the partial barcodes together, returning a complete barcode when once the entire code has been recognized. The overlay will also get access to the part of the barcode that's been scanned, *if* the partial barcode includes the start code.
+* Several performance improvements and bug fixes.
+
+---------------------------------------------------------------------
+20101012 Version 2.9.1
+
+* Updated the SDK library file to remove the duplicate symbols for linking.
+* For optimal scanning of long barcodes like VIN, Code 39, or Code 128, it is recommended to use the rotated camera view. To use this, please read the source code comments in the scanPressed method. For very long barcodes, the portrait orientation will be incapable of scanning the entire barcode and you will need to use the rotated view method.
+
+---------------------------------------------------------------------
+20101001 Version 2.9
+
+* Changed the OverlayController class view to not be hidden all the time. This will now allow the modal view animation to show like expected.
+* Changed the ScanOverlay.xib file to layout with the status bar now showing.
+* Changed the ScanOverlay.xib to use a real UIToolbar at the bottom with a standard UIBarButtonItem for the Cancel button.
+* Lots and lots of memory leaks plugged.
+* Added Simulator support to the library. Using in the simulator will bring up the scan overlay but it will not do anything as there is no camera support in the simulator.
+* Added high resolution images (@2x) to support iPhone 4.
+* New supported barcode types: QR Code, Code 128, Code 39, ITF
+
+---------------------------------------------------------------------
+20100729 Version 2.8.2
+
+* Fixed bug in capture library for iPhone 3G devices when using AVCaptureSessionPreset640x480.
+
+---------------------------------------------------------------------
+20100727 Version 2.8.1
+
+* This is only compatible with iPhone OS 4 and later.
+* Major change to the SDK to remove the UIGetScreenImage() API call that is no longer allowed by Apple. This is now using the AVFoundation methods which is only available in iPhone OS 4 or later.
+* The BarcodePickerController is no longer subclassed from UIImagePickerController and is now derived from UIViewController
+* The BarcodePickerController has a new delegate member that must be set to your BarcodePickerControllerDelegate
+* The BarcodePickerController has a new UIView member called cameraView which is used to display the video coming in from the camera. You should add this at the back of your overlay controller under all of the overlay items.
+* In your OverlayController:viewDidLoad: you need to call [parentPicker setCameraView:cameraView];
+* Changed imagePickerControllerDidCancel: to barcodePickerControllerDidCancel:
+* Removed imagePickerController:didFinishPickingImage:editingInfo: as that is no longer used because we are not using the UIImagePickerController
+* For your BarcodePickerController you no longer need to set sourceType, allowsEditing, cameraOverlayView, and showsCameraControls as those were all used by the UIImagePickerController
+* Change your [picker setCameraOverlayView:overlayController.view] to [picker setView:overlayController.view];
+* Add to your project the following Frameworks: AVFoundation, CoreVideo, CodeMedia
+* See the RLSample app for examples of how to make the changes.
+* Compiled full SDK with Xcode 3.2.3 using:
+  SDKROOT = iPhone Device 4.0
+  IPHONEOS_DEPLOYMENT_TARGET = iPhone Device 4.0
+  ARCHS = arm6 arm7
+
+---------------------------------------------------------------------
+20100720 Version 2.8.0
+
+* Currently shipping apps in the app store compiled prior to iOS 4 release should continue to work without modification. If you are planning on releasing an updated application and recompiling using the latest Xcode/SDK combination, you will need your personalized copy of the latest SDK version.
+* Fixed compatibility with iPhone 4 high resolution image capture.
+* Compiled full SDK with Xcode 3.2.3 using:
+  SDKROOT = iPhone Device 4.0
+  IPHONEOS_DEPLOYMENT_TARGET = iPhone Device 3.1
+  ARCHS = arm6 arm7
+* Several memory leaks were cleaned up and we will continue to clean the SDK to prevent problems with customer binaries.
+* There is currently no SDK library object for use in the simulator as there is no camera support in the simulator.
+
+---------------------------------------------------------------------
